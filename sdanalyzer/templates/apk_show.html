@@ -1,0 +1,136 @@
+{% extends "layout.html" %}
+{% block content %}
+<div>
+    <h1>Apk: {{apk.package_name}}</h1>
+    <p>Phone: <a href="/phones/{{phone.id}}">{{phone.name}}</a></p>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">General Info</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#manifest" role="tab" aria-controls="profile" aria-selected="false">Manifest</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Strings</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 mt-4 mb-4">
+                    <div class="card">
+                        <div class="card-header text-white bg-primary">
+                            General Information
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-xl-4 col-lg-4">
+                                    <table>
+                                        <tr>
+                                            <th style="min-width: 130px;">Package Name </th>
+                                            <td>{{apk.package_name}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>App Name </th>
+                                            <td>{{apk.app_name}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Size </th>
+                                            <td>{{apk.size}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>VT: </th>
+                                            {% if apk.vt_link %}
+                                                <td><a href="{{apk.vt_link}}" target="_blank">{{apk.vt_positives}} / {{apk.vt_total}}</a></td>
+                                            {% else %}
+                                                <td>Unknown</td>
+                                            {% endif %}
+                                        </tr>
+                                        <tr>
+                                            <th>Koudous </th>
+                                            {% if apk.koodous_link %}
+                                                <td><a href="{{apk.koodous_link}}" target="_blank">Link</a></td>
+                                            {% else %}
+                                                <td>Unknown</td>
+                                            {% endif %}
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-xl-8 col-lg-8">
+                                    <table>
+                                        <tr>
+                                            <th style="min-width: 80px;">MD5 </th>
+                                            <td>{{apk.md5}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>SHA1</th>
+                                            <td>{{apk.sha1}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>SHA256</th>
+                                            <td>{{apk.sha256}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Path</th>
+                                            <td style="word-wrap: break-word; width: 100%; max-width: 1px;">{{apk.path}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6">
+                    <div class="card">
+                        <div class="card-header text-white bg-primary">
+                            Certificate
+                        </div>
+                        <div class="card-body">
+                            <table>
+                                <tr><th style="min-width:90px;">Subject:</th><td>{{apk.certificate['subjectDN']}}</td></tr>
+                                <tr><th>Issuer: </th><td>{{apk.certificate['issuerDN']}}</td></tr>
+                                <tr><th>Sha1: </th><td> {{apk.certificate['sha1']}}</td></tr>
+                                <tr><th>Serial: </th><td> {{apk.certificate['serial']}}</td></tr>
+                                <tr><th>Not Before:</th><td> {{apk.certificate['not_before']}}</td></tr>
+                                <tr><th>Not After: </th><td>{{apk.certificate['not_after']}}</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6">
+                        <div class="card">
+                            <div class="card-header text-white bg-primary">
+                                Permissions <span class="badge badge-light float-xl-right float-lg-right">{{apk.permissions_suspicious}}</span>
+                            </div>
+                            <div class="card-body">
+                                <ul>
+                                    {% for p in apk.permissions %}
+                                    <li>{{p}}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="manifest" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 bg-light" >
+                    <pre>{{apk.manifest}}</pre>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+            <pre>
+                {% for p in apk.strings %}
+                    {{p}}
+                {% endfor %}
+            </pre>
+        </div>
+    </div>
+</div>
+{% endblock %}

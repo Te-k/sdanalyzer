@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="jumbotron">
+    <h1>Phone: {{phone.name}}</h1>
+    <div class="container">
+        <div class="row">
+            <table class="table" class="display" id="table1">
+                <thead>
+                <tr>
+                    <th>Package Name</th>
+                    <th>App Name</th>
+                    <th>Sha256</th>
+                    <th>Cert</th>
+                    <th>Perms</th>
+                    <th>VT</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for p in apks %}
+                <tr>
+                    <td><a href="/apk/{{p.id}}">{{p.package_name}}</a></td>
+                    <td>{{p.app_name}}</td>
+                    <td><small>{{p.sha256}}</small></td>
+                    <td><small>{{p.certificate_sha1}}</small></td>
+                    <td>{{p.permissions_suspicious}}</td>
+                    <td>{% if p.vt_link %}<a href="{{p.vt_link}}" target="_blank">{{p.vt_positives}} / {{p.vt_total}}</a>{% else %}Unknown{%endif %}</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+    <script>
+$(document).ready( function () {
+    $('#table1').DataTable();
+} );
+    </script>
+{% endblock %}

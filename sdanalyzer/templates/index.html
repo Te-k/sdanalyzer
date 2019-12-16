@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="jumbotron">
+    <h1>SnoopDroid Analyzer</h1>
+    <p>This application allows you to analyzer a large number of APKs applications, likely extracted using <a href="https://github.com/botherder/snoopdroid" target="_blank">Snoopdroid</a> to identify malicious applications on an Android phone.</p>
+    <p>You can start directly by creating a new phone to be analyze here, or check the phones already analyzed below.</p>
+    <center>
+        <a class="btn btn-lg btn-primary" href="/phones/new" role="button">New Phone</a>
+    </center>
+</div>
+
+{% if phones | length > 0 %}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Model</th>
+            <th>Date</th>
+            <th>#apk</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in phones %}
+            <tr>
+                <td><a href="/phones/{{p.id}}">{{p.name}}</a></td>
+                <td>{{p.modele}}</td>
+                <td>{{p.created_on}}</td>
+                <td></td>
+            </tr>
+            {% endfor %}
+    </tbody>
+</table>
+
+
+</table>
+{% else %}
+<i>There are currently no phones in the database</i>
+{%endif %}
+{% endblock %}
