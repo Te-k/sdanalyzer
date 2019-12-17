@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, redirect, url_for, send_file
 from peewee import Model, CharField, ForeignKeyField, DateTimeField, TextField, BooleanField, IntegerField
 from playhouse.sqlite_ext import SqliteExtDatabase, JSONField
 from .forms import PhoneForm
-from .utils import get_db_path
+from .utils import get_db_path, SUSPICIOUS_PERMISSIONS
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -39,8 +39,8 @@ class Apk(Model):
     vt_positives = IntegerField(null=True)
     vt_total = IntegerField(null = True)
     vt_link = CharField(null = True)
-    verified = BooleanField()
     suspicious = BooleanField(null=True)
+    suspicious_level = IntegerField()
 
     class Meta:
         database = db
@@ -77,4 +77,4 @@ def phones_show(_id):
 def apk_show(_id):
     apk = Apk.get(Apk.id == _id)
     phone = apk.owner
-    return render_template('apk_show.html', phone=phone, apk=apk)
+    return render_template('apk_show.html', phone=phone, apk=apk, sp=SUSPICIOUS_PERMISSIONS)

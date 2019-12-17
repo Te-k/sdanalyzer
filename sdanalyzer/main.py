@@ -5,7 +5,7 @@ import threading
 import webbrowser
 from androguard.core import androconf
 from .app import app, Phone, Apk
-from .utils import get_db_path, extract_apk_infos, get_sha256, check_vt, get_koodous_report
+from .utils import get_db_path, extract_apk_infos, get_sha256, check_vt, get_koodous_report, get_suspicious_level
 
 
 def add_apk(apkpath, phone):
@@ -27,7 +27,7 @@ def add_apk(apkpath, phone):
     apk.urls = res['urls']
     apk.strings = res['strings']
     apk.size = res['size']
-    apk.verified = False
+    apk.suspicious = None
     vt = check_vt(res['sha256'])
     if vt['found']:
         apk.vt_link = vt['permalink']
@@ -38,6 +38,7 @@ def add_apk(apkpath, phone):
     k = get_koodous_report(res['sha256'])
     if k:
         apk.koodous_link = "https://koodous.com/apks/{}".format(res['sha256'])
+    apk.suspicious_level = get_suspicious_level(apk)
     apk.save()
 
 

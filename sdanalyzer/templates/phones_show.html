@@ -2,14 +2,11 @@
 {% block content %}
 <div class="jumbotron">
     <h1>Phone: {{phone.name}}</h1>
-    <div class="container">
-        <div class="row">
-            <table class="table" class="display" id="table1">
+            <table class="table" class="display hover compact table table-striped table-bordered" id="table1" style="width: 100%">
                 <thead>
                 <tr>
                     <th>Package Name</th>
                     <th>App Name</th>
-                    <th>Sha256</th>
                     <th>Cert</th>
                     <th>Perms</th>
                     <th>VT</th>
@@ -22,24 +19,33 @@
                 <tr>
                     <td><a href="/apk/{{p.id}}">{{p.package_name}}</a></td>
                     <td>{{p.app_name}}</td>
-                    <td><small>{{p.sha256}}</small></td>
                     <td><small>{{p.certificate_sha1}}</small></td>
                     <td>{{p.permissions_suspicious}}</td>
                     <td>{% if p.vt_link %}<a href="{{p.vt_link}}" target="_blank">{{p.vt_positives}} / {{p.vt_total}}</a>{% else %}Unknown{%endif %}</td>
-                    <td></td>
-                    <td></td>
+                    <td>{% if p.suspicious_level == 1%}<span class="badge badge-success">Low</span>{%elif p.suspicious_level == 2%}<span class="badge badge-warning">Medium</span>{%else%}<span class="badge badge-danger">High</span>{% endif %}</td>
+                    <td>{% if p.suspicious == False %}<i class="fa fa-thumbs-up"></i>{%elif p.suspicious == True %}<i class="fa fa-thumbs-down"></i>{% else %}<i class="fa fa-question"></i>{% endif %}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
             </table>
-        </div>
-    </div>
 </div>
 {% endblock %}
 {% block scripts %}
     <script>
 $(document).ready( function () {
-    $('#table1').DataTable();
+    $('#table1').DataTable({
+        "paging":   false,
+        "order": [[ 5, "desc" ]],
+        "columns": [
+            null,
+            { "width": "10%" },
+            null,
+            null,
+            null,
+            null,
+            null
+        ]
+    });
 } );
     </script>
 {% endblock %}

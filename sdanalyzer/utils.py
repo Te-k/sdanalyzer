@@ -14,7 +14,8 @@ SUSPICIOUS_PERMISSIONS  = [
     'android.permission.RECORD_AUDIO',
     'android.permission.CAMERA',
     'android.permission.READ_CALL_LOG',
-    'android.permission.READ_CONTACTS'
+    'android.permission.READ_CONTACTS',
+    'android.permission.READ_EXTERNAL_STORAGE'
 ]
 
 
@@ -105,6 +106,27 @@ def get_strings(apk):
         res += re.findall(b"[\x1f-\x7e]{6,}", dex)
         res += re.findall(b"(?:[\x1f-\x7e][\x00]){6,}", dex)
     return [s.decode('utf-8') for s in res]
+
+
+def get_suspicious_level(apk):
+    """
+    Compute suspicious level
+    1 : Low
+    2 : Medium
+    3 : High
+    """
+    level = 1
+    if apk.vt_link:
+        if apk.vt_positives > 5:
+            level = 3
+        elif apk.vt_positives > 0:
+            level = 2
+    else:
+        level = 2
+    if apk.permissions_suspicious > 5:
+        level = max(level, 2)
+    # TODO : ass list o known good certificates
+    return level
 
 
 def extract_apk_infos(apk_path):
