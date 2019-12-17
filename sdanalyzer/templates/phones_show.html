@@ -12,6 +12,8 @@
                     <th>VT</th>
                     <th></th>
                     <th></th>
+                    <th></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -28,6 +30,8 @@
                             <a class="dropdown-item" href="/apk/{{p.id}}/status?status=none&next=phone"><i class="fa fa-question"></i></a>
     <a class="dropdown-item" href="/apk/{{p.id}}/status?status=bad&next=phone"><i class="fa fa-thumbs-down"></i></a>
   </div></td>
+                    <td>{{p.id}}</td>
+                    <td>{{p.suspicious}}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
@@ -36,8 +40,8 @@
 {% endblock %}
 {% block scripts %}
     <script>
-$(document).ready( function () {
-    $('#table1').DataTable({
+$(function(){
+    var table = $('#table1').DataTable({
         "paging":   false,
         "order": [[ 5, "desc" ]],
         "columns": [
@@ -47,7 +51,52 @@ $(document).ready( function () {
             null,
             null,
             null,
+            null,
+            null,
             null
+        ],
+        "columnDefs": [
+            {
+                "targets": [ 7 ],
+                "visible": false,
+                "searchable": false
+            },
+            {
+                "targets": [ 8 ],
+                "visible": false,
+            }
+        ],
+        "dom": 'Bfrtip',
+        "buttons": [
+            {
+                text: 'Mark All Shown As Good',
+                action: function ( e, dt, node, config ) {
+                    data = table.rows({ search: 'applied' }).data();
+                    apks = Array.from(data, x => x[7]);
+                    if (apks.length > 0) {
+                        d = JSON.stringify({'status': 'good', 'apks': apks});
+                        $.ajax({
+                            type: "POST",
+                            contentType: "application/json; charset=utf-8",
+                            url: "/apk/bulk_status",
+                            data: d,
+                            dataType: "json",
+                            success: function (data, st, xhr) {
+                                document.location.reload(true);
+                            }
+                        });
+                    }
+                }
+            },
+            {
+                text: 'Only Show Not-Analyzed',
+                action: function ( e, dt, node, config ) {
+                    table
+                    .column(8)
+                    .search('None')
+                    .draw();
+                }
+            }
         ]
     });
 } );

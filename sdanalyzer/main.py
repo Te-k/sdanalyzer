@@ -4,6 +4,7 @@ import argparse
 import threading
 import webbrowser
 from androguard.core import androconf
+from androguard.core.bytecodes.axml import ResParserError
 from .app import app, Phone, Apk
 from .utils import get_db_path, extract_apk_infos, get_sha256, check_vt, get_koodous_report, get_suspicious_level
 
@@ -105,19 +106,22 @@ def main():
                 print("APK {} added to the phone".format(args.APK))
             elif os.path.isdir(args.APK):
                 for f in os.listdir(args.APK):
-                    pp = os.path.join(args.APK, f)
-                    print("Importing {}".format(pp))
-                    ret_type = androconf.is_android(pp)
-                    if ret_type != "APK":
-                        print("{} is not an APK file".format(pp))
-                        continue
-                    h = get_sha256(pp)
-                    a = len(Apk.select().join(Phone).where(Phone.id == phone.id, Apk.sha256 == h))
-                    if a > 0:
-                        print("This APK {} is already in the database".format(pp))
-                        continue
-                    add_apk(pp, phone)
-                    print("APK {} added to the phone".format(pp))
+                    try:
+                        pp = os.path.join(args.APK, f)
+                        print("Importing {}".format(pp))
+                        ret_type = androconf.is_android(pp)
+                        if ret_type != "APK":
+                            print("{} is not an APK file".format(pp))
+                            continue
+                        h = get_sha256(pp)
+                        a = len(Apk.select().join(Phone).where(Phone.id == phone.id, Apk.sha256 == h))
+                        if a > 0:
+                            print("This APK {} is already in the database".format(pp))
+                            continue
+                        add_apk(pp, phone)
+                        print("APK {} added to the phone".format(pp))
+                    except ResParserError:
+                        print("Parsing Error from androguard, this app will be ignored")
             else:
                 print("Invalid path")
         else:

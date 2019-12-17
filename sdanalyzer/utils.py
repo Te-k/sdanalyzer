@@ -3,6 +3,7 @@ import re
 import hashlib
 import requests
 from androguard.misc import AnalyzeAPK
+from androguard.core.bytecodes import apk as aapk
 from androguard.core import androconf
 
 
@@ -142,7 +143,8 @@ def extract_apk_infos(apk_path):
     sha1.update(data)
     md5.update(data)
 
-    apk, dex, dexes = AnalyzeAPK(apk_path)
+    #apk, dex, dexes = AnalyzeAPK(apk_path)
+    apk = aapk.APK(apk_path)
     res = {
         'sha256': sha256.hexdigest(),
         'sha1': sha1.hexdigest(),

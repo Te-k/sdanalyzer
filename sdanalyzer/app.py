@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 import datetime
-from flask import Flask, render_template, request, redirect, url_for, send_file
+from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify
 from peewee import Model, CharField, ForeignKeyField, DateTimeField, TextField, BooleanField, IntegerField
 from playhouse.sqlite_ext import SqliteExtDatabase, JSONField
 from .forms import PhoneForm
@@ -95,5 +95,28 @@ def apk_status(_id):
         if redir == 'phone':
             phone = apk.owner
             return redirect('/phones/{}'.format(phone.id))
+        elif redir == 'json':
+            return 'All good'
     return redirect('/apk/{}'.format(apk.id))
 
+
+@app.route('/apk/bulk_status', methods=['POST'])
+def apk_bulk_status():
+    status = request.json['status']
+    apks = request.json['apks']
+    if apks and status:
+        if status == 'good':
+            s = False
+        elif status == 'bad':
+            s = true
+        else:
+            s = None
+
+        for p in apks:
+            apk = Apk.get(Apk.id == int(p))
+            if apk.suspicious != s:
+                apk.suspicious = s
+                apk.save()
+        return jsonify({'result': 'good'})
+    else:
+        return "Record not found", 400
