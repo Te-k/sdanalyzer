@@ -23,7 +23,11 @@
                     <td>{{p.permissions_suspicious}}</td>
                     <td>{% if p.vt_link %}<a href="{{p.vt_link}}" target="_blank">{{p.vt_positives}} / {{p.vt_total}}</a>{% else %}Unknown{%endif %}</td>
                     <td>{% if p.suspicious_level == 1%}<span class="badge badge-success">Low</span>{%elif p.suspicious_level == 2%}<span class="badge badge-warning">Medium</span>{%else%}<span class="badge badge-danger">High</span>{% endif %}</td>
-                    <td>{% if p.suspicious == False %}<i class="fa fa-thumbs-up"></i>{%elif p.suspicious == True %}<i class="fa fa-thumbs-down"></i>{% else %}<i class="fa fa-question"></i>{% endif %}</td>
+                    <td><span id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% if p.suspicious == False %}<i class="fa fa-thumbs-up"></i>{%elif p.suspicious == True %}<i class="fa fa-thumbs-down"></i>{% else %}<i class="fa fa-question"></i>{% endif %}</span><div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="/apk/{{p.id}}/status?status=good&next=phone"><i class="fa fa-thumbs-up"></i></a>
+                            <a class="dropdown-item" href="/apk/{{p.id}}/status?status=none&next=phone"><i class="fa fa-question"></i></a>
+    <a class="dropdown-item" href="/apk/{{p.id}}/status?status=bad&next=phone"><i class="fa fa-thumbs-down"></i></a>
+  </div></td>
                 </tr>
                 {% endfor %}
                 </tbody>

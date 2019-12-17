@@ -78,3 +78,22 @@ def apk_show(_id):
     apk = Apk.get(Apk.id == _id)
     phone = apk.owner
     return render_template('apk_show.html', phone=phone, apk=apk, sp=SUSPICIOUS_PERMISSIONS)
+
+@app.route('/apk/<int:_id>/status')
+def apk_status(_id):
+    apk = Apk.get(Apk.id == _id)
+    status = request.args.get('status')
+    if status == 'good':
+        apk.suspicious = False
+    elif status == 'bad':
+        apk.suspicious = True
+    else:
+        apk.suspicious = None
+    apk.save()
+    redir = request.args.get('next')
+    if redir is not None:
+        if redir == 'phone':
+            phone = apk.owner
+            return redirect('/phones/{}'.format(phone.id))
+    return redirect('/apk/{}'.format(apk.id))
+

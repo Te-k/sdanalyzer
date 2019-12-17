@@ -1,19 +1,36 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid jumbotron">
     <div class="row">
         <div class="col-xl-10 col-lg-10">
             <h1>Apk: {{apk.package_name}}</h1>
             <p>Phone: <a href="/phones/{{phone.id}}">{{phone.name}}</a></p>
         </div>
         <div class="col-xl-2 col-lg-2">
-           {% if apk.suspicious == True %}
-           <h1><i class="fa fa-thumbs-up fa-2x"></i></h1>
-           {% elif apk.suspicious == False %}
-           <h1><i class="fa fa-thumbs-down fa-2x"></i></h1>
-           {% else %}
-           <h1><i class="fa fa-question fa-2x"></i></h1>
-           {% endif %}
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 text-center">
+                        {% if apk.suspicious == True %}
+                            <h1><i class="fa fa-thumbs-down fa-2x text-danger"></i></h1>
+                        {% elif apk.suspicious == False %}
+                            <h1><i class="fa fa-thumbs-up fa-2x text-success"></i></h1>
+                        {% else %}
+                            <h1><i class="fa fa-question fa-2x"></i></h1>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-4 col-lg-4">
+                        <a href="/apk/{{apk.id}}/status?status=bad" style="color: inherit;"><i class="fa fa-thumbs-down"></i></a>
+                    </div>
+                    <div class="col-xl-4 col-lg-4">
+                        <a href="/apk/{{apk.id}}/status?status=none" style="color: inherit;"><i class="fa fa-question"></i></a>
+                    </div>
+                    <div class="col-xl-4 col-lg-4">
+                        <a href="/apk/{{apk.id}}/status?status=good" style="color: inherit;"><i class="fa fa-thumbs-up"></i></a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row">
@@ -43,7 +60,7 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-xl-4 col-lg-4">
+                                <div class="col-xl-5 col-lg-5">
                                     <table>
                                         <tr>
                                             <th style="min-width: 130px;">Package Name </th>
@@ -83,9 +100,13 @@
                                                 <td>Unknown</td>
                                             {% endif %}
                                         </tr>
+                                        <tr>
+                                            <th>Suspicious Level</th>
+                                            <td>{% if apk.suspicious_level == 1%}<span class="badge badge-success">Low</span>{%elif apk.suspicious_level == 2%}<span class="badge badge-warning">Medium</span>{%else%}<span class="badge badge-danger">High</span>{% endif %}</td>
+                                        </tr>
                                     </table>
                                 </div>
-                                <div class="col-xl-8 col-lg-8">
+                                <div class="col-xl-7 col-lg-7">
                                     <table>
                                         <tr>
                                             <th style="min-width: 80px;">MD5 </th>
