@@ -141,9 +141,6 @@ def get_suspicious_level(apk):
         level = 2
     if apk.permissions_suspicious > 5:
         level = max(level, 2)
-    if apk.certificate_trusted:
-        # Unlikely to be a malware for a trusted certificate
-        level = 1
     return level
 
 

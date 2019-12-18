@@ -21,13 +21,38 @@
                 <tbody>
                 {% for p in apks %}
                 <tr>
-                    <td><a href="/apk/{{p.id}}">{{p.package_name}}</a></td>
+                    <td><a href="/apk/{{p.id}}">{{p.package_name}}</a>
+<span class="dropdown">
+  <button class="btn btn-xs btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      {% if p.vt_link %}
+      <a class="dropdown-item" href="{{p.vt_link}}" target="blank_">VT</a>
+      {% endif %}
+      {% if p.koodous_link %}
+      <a class="dropdown-item" href="{{p.koodous_link}}" target="_blank">Koodous</a>
+      {% endif %}
+        <a class="dropdown-item" href="https://www.apklab.io/samples.html?filter={{p.sha256}}" target="blank_">APKLab</a>
+  </span>
+
+                    </td>
                     <td>{{p.app_name}}</td>
-                    <td><small>{{p.certificate_sha1}}</small>{% if p.certificate_trusted%} <i class="fa fa-check-circle text-success"></i> {%endif%}</td>
-                    <td>{{p.permissions_suspicious}}</td>
-                    <td>{% if p.vt_link %}<a href="{{p.vt_link}}" target="_blank">{{p.vt_positives}} / {{p.vt_total}}</a>{% else %}Unknown{%endif %}</td>
-                    <td>{% if p.suspicious_level == 1%}<span class="badge badge-success">Low</span>{%elif p.suspicious_level == 2%}<span class="badge badge-warning">Medium</span>{%else%}<span class="badge badge-danger">High</span>{% endif %}</td>
-                    <td><span id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% if p.suspicious == False %}<i class="fa fa-thumbs-up"></i>{%elif p.suspicious == True %}<i class="fa fa-thumbs-down"></i>{% else %}<i class="fa fa-question"></i>{% endif %}</span><div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <td><small>{{p.certificate_sha1}}</small>{% if p.certificate_trusted%} <i class="fa fa-check-circle text-success" data-toggle="tooltip" data-placement="top" title="{{p.certificate_trusted_name}}"></i> {%endif%}</td>
+                    <td style="text-align: center;">{{p.permissions_suspicious}}</td>
+                    <td style="text-align: center;">
+                        {% if p.vt_link %}
+                            {% if p.vt_positives == 0 %}
+                                <a href="{{p.vt_link}}" target="_blank"><span class="badge badge-success">{{p.vt_positives}} / {{p.vt_total}}</span></a>
+                            {% elif p.vt_positives < 5 %}
+                                <a href="{{p.vt_link}}" target="_blank"><span class="badge badge-warning">{{p.vt_positives}} / {{p.vt_total}}</span></a>
+                            {% else %}
+                                <a href="{{p.vt_link}}" target="_blank"><span class="badge badge-danger">{{p.vt_positives}} / {{p.vt_total}}</span></a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{{p.vt_link}}" target="_blank"><span class="badge badge-warning">Unknown</span></a>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: center;">{% if p.suspicious_level == 1%}<span class="badge badge-success">Low</span>{%elif p.suspicious_level == 2%}<span class="badge badge-warning">Medium</span>{%else%}<span class="badge badge-danger">High</span>{% endif %}</td>
+                    <td style="text-align: center;"><span id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% if p.suspicious == False %}<i class="fa fa-thumbs-up"></i>{%elif p.suspicious == True %}<i class="fa fa-thumbs-down"></i>{% else %}<i class="fa fa-question"></i>{% endif %}</span><div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="/apk/{{p.id}}/status?status=good&next=phone"><i class="fa fa-thumbs-up"></i></a>
                             <a class="dropdown-item" href="/apk/{{p.id}}/status?status=none&next=phone"><i class="fa fa-question"></i></a>
     <a class="dropdown-item" href="/apk/{{p.id}}/status?status=bad&next=phone"><i class="fa fa-thumbs-down"></i></a>
@@ -98,12 +123,32 @@ $(function(){
         "dom": 'Bfrtip',
         "buttons": [
             {
-                text: 'Mark All Shown As Good',
+                text: 'Mark Displayed Apps As Good',
                 action: function ( e, dt, node, config ) {
                     data = table.rows({ search: 'applied' }).data();
                     apks = Array.from(data, x => x[7]);
                     if (apks.length > 0) {
                         d = JSON.stringify({'status': 'good', 'apks': apks});
+                        $.ajax({
+                            type: "POST",
+                            contentType: "application/json; charset=utf-8",
+                            url: "/apk/bulk_status",
+                            data: d,
+                            dataType: "json",
+                            success: function (data, st, xhr) {
+                                document.location.reload(true);
+                            }
+                        });
+                    }
+                }
+            },
+            {
+                text: 'Reset Analysis of Displayed Apps',
+                action: function ( e, dt, node, config ) {
+                    data = table.rows({ search: 'applied' }).data();
+                    apks = Array.from(data, x => x[7]);
+                    if (apks.length > 0) {
+                        d = JSON.stringify({'status': 'none', 'apks': apks});
                         $.ajax({
                             type: "POST",
                             contentType: "application/json; charset=utf-8",

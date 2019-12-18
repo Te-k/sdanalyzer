@@ -32,6 +32,8 @@ sdanalyzer serve
 ## TODO
 
 * Export results to CSV / PDF for archive
+* Check apps with Yara rules for known android malware
+* Comments ?
 
 ## License
 
