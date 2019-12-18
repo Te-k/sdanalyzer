@@ -1,17 +1,14 @@
-# snoopdroid-analyzer
+# sdanalyzer
 
 Tool to analyze snoopdroid dumps
 
-## TODO
-
-* Create projects
-* Manifest, VT, certificate, Koodous etc.
-* Add bug report analysis
-* -> Analyze the last phone
-* yara rules from AI
-* Summary -> PDF
-
 ## Installation
+
+Download the code from the git repository, then do :
+
+```
+pip install .
+```
 
 ## How to use it
 
@@ -29,8 +26,12 @@ sdanalyzer import --phone 1 .
 
 **Run the web server to check the APKs:**
 ```
-sdanalyzer server
+sdanalyzer serve
 ```
+
+## TODO
+
+* Export results to CSV / PDF for archive
 
 ## License
 

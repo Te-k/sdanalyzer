@@ -15,10 +15,16 @@ setup(
     keywords='osint',
     include_package_data=True,
     install_requires=[
+        'Flask==1.1.1',
+        'Flask-WTF==1.1.1',
+        'peewee==3.13.1',
+        'androguard==3.3.5',
+        'requests'
         ],
     python_requires='>=3.5',
     license='GPLv3',
-    packages=['sdanalyzer'],
+    packages=['sdanalyzer', 'sdanalyzer.templates', 'sdanalyzer.data'],
+    package_data={'sdanalyzer': ['sdanalyzer/data/*.csv']},
     entry_points= {
         'console_scripts': [ 'sdanalyzer=sdanalyzer.main:main' ]
     },

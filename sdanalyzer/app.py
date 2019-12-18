@@ -30,6 +30,8 @@ class Apk(Model):
     manifest = TextField()
     certificate_sha1 = CharField(null = True)
     certificate = JSONField(null = True)
+    certificate_trusted = BooleanField()
+    certificate_trusted_name = CharField(null = True)
     permissions = JSONField(null = True)
     permissions_suspicious = IntegerField(null=True)
     urls = JSONField(null = True)
@@ -54,7 +56,10 @@ db.create_tables([Phone, Apk])
 @app.route('/')
 def hello():
     phones = Phone.select()
-    return render_template('index.html', phones=phones)
+    apks = {}
+    for p in phones:
+        apks[p.id] = len(Apk.select().join(Phone).where(Phone.id == p.id))
+    return render_template('index.html', phones=phones, apks=apks)
 
 
 @app.route('/phones/new', methods=['GET', 'POST'])

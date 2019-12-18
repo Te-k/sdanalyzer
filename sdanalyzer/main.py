@@ -23,6 +23,8 @@ def add_apk(apkpath, phone):
     if len(res['certificate']) > 0:
         apk.certificate_sha1 = res['certificate']['sha1']
         apk.certificate = res['certificate']
+    apk.certificate_trusted = res['trusted_cert']
+    apk.certificate_trusted_name = res['trusted_cert_name']
     apk.permissions = res['permissions']
     apk.permissions_suspicious = res['suspicious_permissions']
     apk.urls = res['urls']
@@ -65,10 +67,10 @@ def main():
 
     if 'subcommand' in args:
         if args.subcommand == 'serve':
-            # We launch a browser with some delay.
-            # TODO : fix me
-            url = 'http://127.0.0.1:{}'.format(args.port)
-            threading.Timer(1.25, lambda: webbrowser.open(url) ).start
+            if not args.debug:
+                # We launch a browser with some delay.
+                url = 'http://127.0.0.1:{}'.format(args.port)
+                threading.Timer(1.25, lambda: webbrowser.open(url) ).start()
 
             # launch the flask app
             app.run(port=args.port, debug=args.debug)
@@ -108,18 +110,21 @@ def main():
                 for f in os.listdir(args.APK):
                     try:
                         pp = os.path.join(args.APK, f)
-                        print("Importing {}".format(pp))
-                        ret_type = androconf.is_android(pp)
-                        if ret_type != "APK":
-                            print("{} is not an APK file".format(pp))
-                            continue
-                        h = get_sha256(pp)
-                        a = len(Apk.select().join(Phone).where(Phone.id == phone.id, Apk.sha256 == h))
-                        if a > 0:
-                            print("This APK {} is already in the database".format(pp))
-                            continue
-                        add_apk(pp, phone)
-                        print("APK {} added to the phone".format(pp))
+                        if os.path.isfile(pp):
+                            print("Importing {}".format(pp))
+                            ret_type = androconf.is_android(pp)
+                            if ret_type != "APK":
+                                print("{} is not an APK file".format(pp))
+                                continue
+                            h = get_sha256(pp)
+                            a = len(Apk.select().join(Phone).where(Phone.id == phone.id, Apk.sha256 == h))
+                            if a > 0:
+                                print("This APK {} is already in the database".format(pp))
+                                continue
+                            add_apk(pp, phone)
+                            print("APK {} added to the phone".format(pp))
+                        else:
+                            print("{} is not a file".format(pp))
                     except ResParserError:
                         print("Parsing Error from androguard, this app will be ignored")
             else:

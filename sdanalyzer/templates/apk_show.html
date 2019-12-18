@@ -154,6 +154,9 @@
                                 <tr><th>Serial: </th><td> {{apk.certificate['serial']}}</td></tr>
                                 <tr><th>Not Before:</th><td> {{apk.certificate['not_before']}}</td></tr>
                                 <tr><th>Not After: </th><td>{{apk.certificate['not_after']}}</td></tr>
+                                {% if apk.certificate_trusted  %}
+                                <tr><th>Trusted:</th><td> {{apk.certificate_trusted_name}} <i class="fa fa-check-circle text-success"></i></td></tr>
+                                {% endif %}
                             </table>
                         </div>
                     </div>

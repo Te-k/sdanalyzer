@@ -20,6 +20,21 @@ SUSPICIOUS_PERMISSIONS  = [
 ]
 
 
+def get_know_certificates():
+    """
+    Get know trusted certificates
+    """
+    csv_path = os.path.join(os.path.realpath(__file__)[:-8], 'data/trusted_certs.csv')
+    certs = {}
+    with open(csv_path, 'r') as f:
+        data = f.read()
+    for d in data.split('\n'):
+        if d.strip() != '':
+            dd = d.strip().split(';')
+            certs[dd[0].upper()] = dd[1]
+    return certs
+
+
 def count_suspicious_permissions(permissions):
     return len([p for p in permissions if p in SUSPICIOUS_PERMISSIONS])
 
@@ -126,7 +141,9 @@ def get_suspicious_level(apk):
         level = 2
     if apk.permissions_suspicious > 5:
         level = max(level, 2)
-    # TODO : ass list o known good certificates
+    if apk.certificate_trusted:
+        # Unlikely to be a malware for a trusted certificate
+        level = 1
     return level
 
 
@@ -153,6 +170,8 @@ def extract_apk_infos(apk_path):
         'app_name': apk.get_app_name(),
         'package_name': apk.get_package(),
         'certificate': {},
+        'trusted_cert': False,
+        'trusted_cert_name': None,
         'signature_name': apk.get_signature_name(),
         'permissions': apk.get_permissions(),
         'suspicious_permissions': count_suspicious_permissions(apk.get_permissions()),
@@ -162,12 +181,16 @@ def extract_apk_infos(apk_path):
     }
     if len(apk.get_certificates()) > 0:
         cert = apk.get_certificates()[0]
-        res['certificate']['sha1'] = cert.sha1_fingerprint.replace(' ', '')
+        csha1 = cert.sha1_fingerprint.replace(' ', '')
+        res['certificate']['sha1'] = csha1
         res['certificate']['serial'] = '{:X}'.format(cert.serial_number)
         res['certificate']['issuerDN'] = convert_x509_name(cert.issuer)
         res['certificate']['subjectDN'] = convert_x509_name(cert.subject)
         res['certificate']['not_before'] = cert['tbs_certificate']['validity']['not_before'].native.strftime('%b %-d %X %Y %Z')
         res['certificate']['not_after'] = cert['tbs_certificate']['validity']['not_after'].native.strftime('%b %-d %X %Y %Z')
+        trusted_certs = get_know_certificates()
+        if csha1.upper() in trusted_certs:
+            res['trusted_cert'] = True
+            res['trusted_cert_name'] = trusted_certs[csha1.upper()]
 
     return res
-
