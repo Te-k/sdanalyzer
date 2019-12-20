@@ -104,6 +104,12 @@
                                             <th>APKLab </th>
                                             <td><a href="https://www.apklab.io/samples.html?filter={{apk.sha256}}" target="_blank">Search</a></td>
                                         </tr>
+                                        {% if apk.frosting %}
+                                        <tr>
+                                            <th>Google Play</th>
+                                            <td><i class="fa fa-play"></i></td>
+                                        </tr>
+                                        {% endif %}
                                         <tr>
                                             <th>Suspicious Level</th>
                                             <td>{% if apk.suspicious_level == 1%}<span class="badge badge-success">Low</span>{%elif apk.suspicious_level == 2%}<span class="badge badge-warning">Medium</span>{%else%}<span class="badge badge-danger">High</span>{% endif %}</td>

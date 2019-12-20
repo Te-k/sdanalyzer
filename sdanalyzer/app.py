@@ -41,6 +41,7 @@ class Apk(Model):
     vt_positives = IntegerField(null=True)
     vt_total = IntegerField(null = True)
     vt_link = CharField(null = True)
+    frosting = BooleanField()
     suspicious = BooleanField(null=True)
     suspicious_level = IntegerField()
 

@@ -144,6 +144,14 @@ def get_suspicious_level(apk):
     return level
 
 
+def get_frosting(apk):
+    """
+    Return True if it has Google Play Store metadata
+    """
+    apk.parse_v2_v3_signature()
+    return (0x2146444e in apk._v2_blocks)
+
+
 def extract_apk_infos(apk_path):
     """
     Extract informations from an APK
@@ -174,7 +182,8 @@ def extract_apk_infos(apk_path):
         'suspicious_permissions': count_suspicious_permissions(apk.get_permissions()),
         'urls': get_urls(apk),
         'strings': get_strings(apk),
-        'size': len(data)
+        'size': len(data),
+        'frosting': get_frosting(apk)
     }
     if len(apk.get_certificates()) > 0:
         cert = apk.get_certificates()[0]

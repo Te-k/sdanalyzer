@@ -9,6 +9,7 @@
                     <th>App Name</th>
                     <th>Cert</th>
                     <th>Perms</th>
+                    <td></td>
                     <th>VT</th>
                     <th></th>
                     <th></th>
@@ -38,6 +39,7 @@
                     <td>{{p.app_name}}</td>
                     <td><small>{{p.certificate_sha1}}</small>{% if p.certificate_trusted%} <i class="fa fa-check-circle text-success" data-toggle="tooltip" data-placement="top" title="{{p.certificate_trusted_name}}"></i> {%endif%}</td>
                     <td style="text-align: center;">{{p.permissions_suspicious}}</td>
+                    <td style="text-align: center;">{% if p.frosting %}<i class="fa fa-play" data-toggle="tooltip" data-placement="top" title="Google Play Store Metadata"></i>{%endif%}</td>
                     <td style="text-align: center;">
                         {% if p.vt_link %}
                             {% if p.vt_positives == 0 %}
@@ -92,24 +94,24 @@ $(function(){
             },
             {
                 "targets": [ 4],
-                "width": "80px"
+                "width": "50px"
             },
             {
                 "targets": [ 5],
-                "width": "60px"
+                "width": "80px"
             },
             {
                 "targets": [ 6],
-                "width": "15px"
+                "width": "60px"
             },
             {
-                "targets": [ 7 ],
-                "visible": false,
-                "searchable": false
+                "targets": [ 7],
+                "width": "15px"
             },
             {
                 "targets": [ 8 ],
                 "visible": false,
+                "searchable": false
             },
             {
                 "targets": [ 9 ],
@@ -117,6 +119,10 @@ $(function(){
             },
             {
                 "targets": [ 10 ],
+                "visible": false,
+            },
+            {
+                "targets": [ 11 ],
                 "visible": false,
             }
         ],
@@ -126,7 +132,7 @@ $(function(){
                 text: 'Mark Displayed Apps As Good',
                 action: function ( e, dt, node, config ) {
                     data = table.rows({ search: 'applied' }).data();
-                    apks = Array.from(data, x => x[7]);
+                    apks = Array.from(data, x => x[8]);
                     if (apks.length > 0) {
                         d = JSON.stringify({'status': 'good', 'apks': apks});
                         $.ajax({
@@ -146,7 +152,7 @@ $(function(){
                 text: 'Reset Analysis of Displayed Apps',
                 action: function ( e, dt, node, config ) {
                     data = table.rows({ search: 'applied' }).data();
-                    apks = Array.from(data, x => x[7]);
+                    apks = Array.from(data, x => x[8]);
                     if (apks.length > 0) {
                         d = JSON.stringify({'status': 'none', 'apks': apks});
                         $.ajax({
@@ -166,7 +172,7 @@ $(function(){
                 text: 'Hide Analyzed Apps',
                 action: function ( e, dt, node, config ) {
                     table
-                    .column(8)
+                    .column(9)
                     .search('None')
                     .draw();
                 }
@@ -175,7 +181,7 @@ $(function(){
                 text: 'Hide Apps with Trusted Certs',
                 action: function ( e, dt, node, config ) {
                     table
-                    .column(10)
+                    .column(11)
                     .search('False')
                     .draw();
                 }

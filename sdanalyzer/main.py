@@ -30,6 +30,7 @@ def add_apk(apkpath, phone):
     apk.urls = res['urls']
     apk.strings = res['strings']
     apk.size = res['size']
+    apk.frosting = res['frosting']
     apk.suspicious = None
     vt = check_vt(res['sha256'])
     if vt['found']:
@@ -107,6 +108,8 @@ def main():
                 add_apk(args.APK, phone)
                 print("APK {} added to the phone".format(args.APK))
             elif os.path.isdir(args.APK):
+                failed = []
+                imported = 0
                 for f in os.listdir(args.APK):
                     try:
                         pp = os.path.join(args.APK, f)
@@ -123,10 +126,18 @@ def main():
                                 continue
                             add_apk(pp, phone)
                             print("APK {} added to the phone".format(pp))
+                            imported += 1
                         else:
                             print("{} is not a file".format(pp))
                     except ResParserError:
+                        failed.append(pp)
                         print("Parsing Error from androguard, this app will be ignored")
+                print("")
+                print("{} applications imported".format(imported))
+                if len(failed) > 0:
+                    print("{} applications could not be imported:".format(len(failed)))
+                    for f in failed:
+                        print("-{}".format(f))
             else:
                 print("Invalid path")
         else:
