@@ -16,7 +16,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'Flask==1.1.1',
-        'Flask-WTF==1.1.1',
+        'Flask-WTF==0.14.2',
         'peewee==3.13.1',
         'androguard==3.3.5',
         'requests'
@@ -24,7 +24,7 @@ setup(
     python_requires='>=3.5',
     license='GPLv3',
     packages=['sdanalyzer', 'sdanalyzer.templates', 'sdanalyzer.data'],
-    package_data={'sdanalyzer': ['sdanalyzer/data/*.csv']},
+    package_data={'sdanalyzer': ['sdanalyzer/data/*', 'sdanalyzer/templates/*']},
     entry_points= {
         'console_scripts': [ 'sdanalyzer=sdanalyzer.main:main' ]
     },

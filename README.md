@@ -37,4 +37,4 @@ sdanalyzer serve
 
 ## License
 
-This code is released un GPLv3 license.
+This code is released under GPLv3 license.

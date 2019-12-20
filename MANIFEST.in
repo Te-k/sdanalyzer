@@ -2,3 +2,4 @@ include LICENSE
 include README.md
 recursive-include sdanalyzer *.py
 recursive-include sdanalyzer/data *.csv
+recursive-include sdanalyzer/templates *.html
