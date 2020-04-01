@@ -16,7 +16,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'Flask==1.1.1',
-        'Flask-WTF==0.14.2',
+        'Flask-WTF==0.14.3',
         'peewee==3.13.1',
         'androguard==3.3.5',
         'requests'
