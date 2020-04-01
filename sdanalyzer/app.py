@@ -61,6 +61,55 @@ class Apk(Model):
     class Meta:
         database = db
 
+    def to_csv(self):
+        """
+        Export to CSV
+        ["md5", "sha1", "sha256", "Package",
+                        "App Name", "Cert Sha1", "Cert Subject", "Cert Issuer",
+                        "Cert Serial", "Cert Not Before", "Cert Not After",
+                        "Size", "VT Link", "VT Result", "Frosting",
+                        "Suspicious Level"]
+        """
+        res = [self.md5, self.sha1, self.sha256, self.package_name,
+            self.app_name, self.certificate_sha1]
+        res.append(self.certificate.get('subjectDN', ''))
+        res.append(self.certificate.get('issuerDN', ''))
+        res.append(self.certificate.get('serial', ''))
+        res.append(self.certificate.get('not_before', ''))
+        res.append(self.certificate.get('not_after', ''))
+        res.append(self.size)
+        if self.vt_link:
+            res.append(self.vt_link)
+        else:
+            res.append('')
+        if self.vt_positives is not None:
+            res.append('{}/{}'.format(self.vt_positives, self.vt_total))
+        else:
+            res.append('')
+        res.append("Yes" if self.frosting else "No")
+        res.append(["Low", "Medium", "High"][self.suspicious_level-1])
+        return res
+
+    def to_json(self):
+        """
+        Export Apk to json
+        """
+        return {
+                "md5": self.md5,
+                "sha1": self.sha1,
+                "sha256": self.sha256,
+                "package_name": self.package_name,
+                "app_name": self.app_name,
+                "certificate": self.certificate,
+                "size": self.size,
+                "koodous_link": self.koodous_link,
+                "vt_link": self.vt_link,
+                "vt_positives": self.vt_positives,
+                "vt_total": self.vt_total,
+                "frosting": self.frosting,
+                "suspicious_level": self.suspicious_level
+        }
+
 
 db.connect()
 db.create_tables([Phone, Apk])

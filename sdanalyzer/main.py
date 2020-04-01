@@ -1,5 +1,7 @@
 import os
 import sys
+import csv
+import json
 import argparse
 import threading
 import webbrowser
@@ -68,6 +70,11 @@ def main():
     parser_e = subparsers.add_parser('delete', help='Delete a phone and related data')
     parser_e.add_argument('PHONE',  help="Phone id or name")
     parser_e.set_defaults(subcommand='delete')
+    parser_f = subparsers.add_parser('export', help='Export information on all apks of a phone')
+    parser_f.add_argument('PHONE',  help="Phone id or name")
+    parser_f.add_argument('--format', '-f', default="csv", choices=["csv", "json"], help="Export format")
+    parser_f.add_argument('--output', '-o', help="Output filename")
+    parser_f.set_defaults(subcommand='export')
     args = parser.parse_args()
 
 
@@ -175,6 +182,37 @@ def main():
                 print("{} apks deleted".format(apknb))
                 phone.delete_instance()
                 print("Phone {} deleted".format(args.PHONE))
+        elif args.subcommand == 'export':
+            try:
+                phone = Phone.find_id_or_name(args.PHONE)
+            except DoesNotExist:
+                print("Phone not found")
+                sys.exit(0)
+            if args.format == "csv":
+                if args.output:
+                    output = args.output
+                else:
+                    output = "{}.csv".format(phone.name.replace(' ', ''))
+                with open(output, 'w') as csvfile:
+                    csvwriter = csv.writer(csvfile, delimiter=',', quotechar='"')
+                    csvwriter.writerow(["md5", "sha1", "sha256", "Package",
+                        "App Name", "Cert Sha1", "Cert Subject", "Cert Issuer",
+                        "Cert Serial", "Cert Not Before", "Cert Not After",
+                        "Size", "VT Link", "VT Result", "Frosting",
+                        "Suspicious Level"])
+                    for apk in Apk.select().where(Apk.owner == phone):
+                        csvwriter.writerow(apk.to_csv())
+            else:
+                if args.output:
+                    output = args.output
+                else:
+                    output = "{}.json".format(phone.name.replace(' ', ''))
+                data = {}
+                for apk in Apk.select().where(Apk.owner == phone):
+                    data[apk.sha256] = apk.to_json()
+                with open(output, "w+") as f:
+                    f.write(json.dumps(data))
+            print("Data dumped in {}".format(output))
         else:
             parser.print_help()
     else:

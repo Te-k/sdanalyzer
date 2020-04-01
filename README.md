@@ -45,6 +45,7 @@ positional arguments:
     phones              List phones
     import              Import apks
     delete              Delete a phone and related data
+    export              Export information on all apks of a phone
 
 optional arguments:
   -h, --help            show this help message and exit
