@@ -3,6 +3,7 @@ import sys
 import argparse
 import threading
 import webbrowser
+from peewee import DoesNotExist
 from androguard.core import androconf
 from androguard.core.bytecodes.axml import ResParserError
 from .app import app, Phone, Apk
@@ -58,11 +59,15 @@ def main():
     parser_b.set_defaults(subcommand='flush')
     parser_c = subparsers.add_parser('phones', help='List phones')
     parser_c.add_argument('--create', '-c', help='Create a new phone')
+    parser_c.add_argument('--phone', '-p', help='Give information on a phone')
     parser_c.set_defaults(subcommand='phones')
     parser_d = subparsers.add_parser('import', help='Import apks')
-    parser_d.add_argument('--phone', '-p', help="Phone id", type=int)
+    parser_d.add_argument('--phone', '-p', help="Phone id")
     parser_d.add_argument("APK", help="APK or folder path")
     parser_d.set_defaults(subcommand='import')
+    parser_e = subparsers.add_parser('delete', help='Delete a phone and related data')
+    parser_e.add_argument('PHONE',  help="Phone id or name")
+    parser_e.set_defaults(subcommand='delete')
     args = parser.parse_args()
 
 
@@ -85,16 +90,30 @@ def main():
                 p = Phone(name=args.create)
                 p.save()
                 print("{}\t{}\t{}".format(p.id, p.name, p.model))
+            elif args.phone:
+                try:
+                    phone = Phone.find_id_or_name(args.phone)
+                    print("Id: {}".format(phone.id))
+                    print("Name: {}".format(phone.name))
+                    print("Model: {}".format(phone.model))
+                    apkn = Apk.select().where(Apk.owner == phone).count()
+                    print("#Apks: {}".format(apkn))
+                except DoesNotExist:
+                    print("Phone not found")
             else:
                 phones = Phone.select()
                 for p in phones:
-                    # TODO : add number of APKs
-                    print("{}\t{}\t{}".format(p.id, p.name, p.model))
+                    apkn = Apk.select().where(Apk.owner == p).count()
+                    print("{}\t{}\t{}\t{} apks".format(p.id, p.name, p.model, apkn))
         elif args.subcommand == 'import':
             if not args.phone:
                 print("Please provide the phone id")
                 sys.exit(0)
-            phone = Phone.get(Phone.id == args.phone)
+            try:
+                phone = Phone.find_id_or_name(args.phone)
+            except DoesNotExist:
+                print("Phone not found")
+                sys.exit(0)
             if os.path.isfile(args.APK):
                 ret_type = androconf.is_android(args.APK)
                 if ret_type != "APK":
@@ -140,6 +159,22 @@ def main():
                         print("-{}".format(f))
             else:
                 print("Invalid path")
+        elif args.subcommand == 'delete':
+            # Delete the phone
+            try:
+                phone = Phone.find_id_or_name(args.PHONE)
+            except DoesNotExist:
+                print("Phone not found")
+                sys.exit(0)
+            else:
+                if input("are you sure you want to delete this phone? (y/n)") != "y":
+                    print("Cancelled")
+                    sys.exit(0)
+                query = Apk.delete().where(Apk.owner == phone)
+                apknb = query.execute()
+                print("{} apks deleted".format(apknb))
+                phone.delete_instance()
+                print("Phone {} deleted".format(args.PHONE))
         else:
             parser.print_help()
     else:

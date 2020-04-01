@@ -11,6 +11,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
 db = SqliteExtDatabase(get_db_path())
 
+
 # Models
 class Phone(Model):
     name = CharField()
@@ -18,6 +19,18 @@ class Phone(Model):
     created_on = DateTimeField(default=datetime.datetime.now)
     class Meta:
         database = db
+
+    @classmethod
+    def find_id_or_name(cls, id_or_name):
+        """
+        Find a phone by id or name
+        """
+        try:
+            phone = Phone.get(Phone.id == int(id_or_name))
+        except ValueError:
+            phone = Phone.get(Phone.name == id_or_name)
+        return phone
+
 
 class Apk(Model):
     owner = ForeignKeyField(Phone, backref='apks')
