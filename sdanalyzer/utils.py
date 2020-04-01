@@ -16,7 +16,11 @@ SUSPICIOUS_PERMISSIONS  = [
     'android.permission.CAMERA',
     'android.permission.READ_CALL_LOG',
     'android.permission.READ_CONTACTS',
-    'android.permission.READ_EXTERNAL_STORAGE'
+    'android.permission.READ_EXTERNAL_STORAGE',
+    'android.permission.AUTHENTICATE_ACCOUNTS',
+    'android.permission.CHANGE_WIFI_STATE',
+    'android.permission.MANAGE_ACCOUNTS',
+    'android.permission.READ_PHONE_STATE'
 ]
 
 
@@ -183,6 +187,7 @@ def extract_apk_infos(apk_path):
         'urls': get_urls(apk),
         'strings': get_strings(apk),
         'size': len(data),
+        'dexes': {},
         'frosting': get_frosting(apk)
     }
     if len(apk.get_certificates()) > 0:
@@ -198,5 +203,14 @@ def extract_apk_infos(apk_path):
         if csha1.upper() in trusted_certs:
             res['trusted_cert'] = True
             res['trusted_cert_name'] = trusted_certs[csha1.upper()]
+
+    dex_names = list(apk.get_dex_names())
+    dex_values = list(apk.get_all_dex())
+    for dex in range(len(dex_names)):
+        m = hashlib.sha256()
+        m.update(dex_values[dex])
+        res['dexes'][dex_names[dex][:-4]] = {
+            'sha256': m.hexdigest(),
+        }
 
     return res

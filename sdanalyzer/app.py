@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 import datetime
-from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify
+from flask import Flask, render_template, request, redirect, send_file, jsonify
 from peewee import Model, CharField, ForeignKeyField, DateTimeField, TextField, BooleanField, IntegerField
 from playhouse.sqlite_ext import SqliteExtDatabase, JSONField
 from .forms import PhoneForm
@@ -41,22 +41,24 @@ class Apk(Model):
     package_name = CharField()
     app_name = CharField()
     manifest = TextField()
-    certificate_sha1 = CharField(null = True)
-    certificate = JSONField(null = True)
+    certificate_sha1 = CharField(null=True)
+    certificate = JSONField(null=True)
     certificate_trusted = BooleanField()
-    certificate_trusted_name = CharField(null = True)
-    permissions = JSONField(null = True)
+    certificate_trusted_name = CharField(null=True)
+    permissions = JSONField(null=True)
     permissions_suspicious = IntegerField(null=True)
-    urls = JSONField(null = True)
-    strings = JSONField(null = True)
+    urls = JSONField(null=True)
+    strings = JSONField(null=True)
     size = IntegerField()
-    koodous_link = CharField(null = True)
+    koodous_link = CharField(null=True)
     vt_positives = IntegerField(null=True)
-    vt_total = IntegerField(null = True)
-    vt_link = CharField(null = True)
+    vt_total = IntegerField(null=True)
+    vt_link = CharField(null=True)
     frosting = BooleanField()
     suspicious = BooleanField(null=True)
     suspicious_level = IntegerField()
+    has_dex = BooleanField(null=True)
+    dexes = JSONField(null=True)
 
     class Meta:
         database = db
@@ -67,7 +69,7 @@ class Apk(Model):
         ["md5", "sha1", "sha256", "Package",
                         "App Name", "Cert Sha1", "Cert Subject", "Cert Issuer",
                         "Cert Serial", "Cert Not Before", "Cert Not After",
-                        "Size", "VT Link", "VT Result", "Frosting",
+                        "Size", "VT Link", "VT Result", "Frosting", "Has Dex"
                         "Suspicious Level"]
         """
         res = [self.md5, self.sha1, self.sha256, self.package_name,
@@ -87,6 +89,7 @@ class Apk(Model):
         else:
             res.append('')
         res.append("Yes" if self.frosting else "No")
+        res.append("Yes" if self.has_dex else "No")
         res.append(["Low", "Medium", "High"][self.suspicious_level-1])
         return res
 
@@ -95,19 +98,21 @@ class Apk(Model):
         Export Apk to json
         """
         return {
-                "md5": self.md5,
-                "sha1": self.sha1,
-                "sha256": self.sha256,
-                "package_name": self.package_name,
-                "app_name": self.app_name,
-                "certificate": self.certificate,
-                "size": self.size,
-                "koodous_link": self.koodous_link,
-                "vt_link": self.vt_link,
-                "vt_positives": self.vt_positives,
-                "vt_total": self.vt_total,
-                "frosting": self.frosting,
-                "suspicious_level": self.suspicious_level
+            "md5": self.md5,
+            "sha1": self.sha1,
+            "sha256": self.sha256,
+            "package_name": self.package_name,
+            "app_name": self.app_name,
+            "certificate": self.certificate,
+            "size": self.size,
+            "koodous_link": self.koodous_link,
+            "vt_link": self.vt_link,
+            "vt_positives": self.vt_positives,
+            "vt_total": self.vt_total,
+            "frosting": self.frosting,
+            "has_dex": self.has_dex,
+            "dexes": self.dexes,
+            "suspicious_level": self.suspicious_level
         }
 
 

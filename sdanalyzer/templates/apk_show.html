@@ -149,9 +149,9 @@
                                                 <span class="dropdown float-xl-right float-lg-right">
   <button class="btn btn-xs btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Search</button>
   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-      <a class="dropdown-item" href="https://www.virustotal.com/gui/search/androguard%253A%2522{{apk.certificate_sha1}}%2522" taret="blank_">VT</a>
+      <a class="dropdown-item" href="https://www.virustotal.com/gui/search/androguard%253A%2522{{apk.certificate_sha1}}%2522" target="blank_">VT</a>
       <a class="dropdown-item" href="https://koodous.com/apks?search=cert:{{apk.certificate_sha1}}" target="_blank">Koodous</a>
-    <a class="dropdown-item" href="https://www.apklab.io/samples.html?filter=cert%3A{{apk.certificate_sha1}}" target="Blank_">APKLab</a>
+    <a class="dropdown-item" href="https://www.apklab.io/samples.html?filter=cert%3A{{apk.certificate_sha1}}" target="blank_">APKLab</a>
   </span>
 </div>
 
@@ -167,6 +167,18 @@
                                 {% if apk.certificate_trusted  %}
                                 <tr><th>Trusted:</th><td> {{apk.certificate_trusted_name}} <i class="fa fa-check-circle text-success"></i></td></tr>
                                 {% endif %}
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:20px;">
+                        <div class="card-header text-white bg-primary">
+                            Dex Files
+                        </div>
+                        <div class="card-body">
+                            <table>
+                                {% for dex in apk.dexes %}
+                                <tr><th>{{dex}}</th><td>{{apk.dexes[dex]['sha256']}}</td></tr>
+                                {% endfor %}
                             </table>
                         </div>
                     </div>

@@ -46,6 +46,8 @@ def add_apk(apkpath, phone):
     if k:
         apk.koodous_link = "https://koodous.com/apks/{}".format(res['sha256'])
     apk.suspicious_level = get_suspicious_level(apk)
+    apk.has_dex = (len(res['dexes'].keys()) > 0)
+    apk.dexes = res['dexes']
     apk.save()
 
 
@@ -198,7 +200,7 @@ def main():
                     csvwriter.writerow(["md5", "sha1", "sha256", "Package",
                         "App Name", "Cert Sha1", "Cert Subject", "Cert Issuer",
                         "Cert Serial", "Cert Not Before", "Cert Not After",
-                        "Size", "VT Link", "VT Result", "Frosting",
+                        "Size", "VT Link", "VT Result", "Frosting", "Has Dex",
                         "Suspicious Level"])
                     for apk in Apk.select().where(Apk.owner == phone):
                         csvwriter.writerow(apk.to_csv())
