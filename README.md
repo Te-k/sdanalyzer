@@ -2,6 +2,8 @@
 
 Tool to analyze a large number of Android applications easily. It consist of a command line tool extracting data from all applications, storing it in a local database, and then opening a web interface to manually analyze the results in a user-friendly way.
 
+![screenshot](screenshot.png)
+
 ## Installation
 
 You can install sdanalyzer directly from [pypi](https://pypi.org/project/sdanalyzer/) : `pip install sdanalyze`.
