@@ -36,10 +36,13 @@ def add_apk(apkpath, phone):
     apk.frosting = res['frosting']
     apk.suspicious = None
     vt = check_vt(res['sha256'])
-    if vt['found']:
-        apk.vt_link = vt['permalink']
-        apk.vt_positives = vt['positives']
-        apk.vt_total = vt['total']
+    if vt:
+        if vt['found']:
+            apk.vt_link = vt['permalink']
+            apk.vt_positives = vt['positives']
+            apk.vt_total = vt['total']
+        else:
+            apk.vt_link = None
     else:
         apk.vt_link = None
     k = get_koodous_report(res['sha256'])
