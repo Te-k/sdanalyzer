@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='sdanalyzer',
-    version='0.1.2',
+    version='0.1.3',
     description='Tool to analyze snoopdroid dump',
     long_description=long_description,
     long_description_content_type="text/markdown",
