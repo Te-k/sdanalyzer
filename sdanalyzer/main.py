@@ -5,6 +5,7 @@ import json
 import argparse
 import threading
 import webbrowser
+import logging
 from peewee import DoesNotExist
 from androguard.core import androconf
 from androguard.core.bytecodes.axml import ResParserError
@@ -82,6 +83,9 @@ def main():
     parser_f.set_defaults(subcommand='export')
     args = parser.parse_args()
 
+    logger = logging.getLogger("androguard.apk")
+    logger.setLevel(logging.CRITICAL)
+
 
     if 'subcommand' in args:
         if args.subcommand == 'serve':
@@ -114,6 +118,8 @@ def main():
                     print("Phone not found")
             else:
                 phones = Phone.select()
+                if len(phones) == 0:
+                    print("No phones in the database")
                 for p in phones:
                     apkn = Apk.select().where(Apk.owner == p).count()
                     print("{}\t{}\t{}\t{} apks".format(p.id, p.name, p.model, apkn))

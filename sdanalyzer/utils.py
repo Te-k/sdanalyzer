@@ -71,8 +71,10 @@ def check_vt(sha256):
     items = []
     items.append({
         "hash": sha256,
-        "image_path": "unknown",
-        "creation_datetime": "unknown",
+        "autostart_location": "",
+        "autostart_entry": "",
+        "local_name": "",
+        "creation_datetime": "",
     })
     headers = {"User-Agent": "VirusTotal", "Content-Type": "application/json"}
     res = requests.post(url, headers=headers, json=items)
