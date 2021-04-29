@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='sdanalyzer',
-    version='0.1.3',
+    version='0.1.4',
     description='Tool to analyze snoopdroid dump',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -15,9 +15,9 @@ setup(
     keywords='osint',
     include_package_data=True,
     install_requires=[
-        'Flask==1.1.1',
+        'Flask==1.1.2',
         'Flask-WTF==0.14.3',
-        'peewee==3.13.2',
+        'peewee==3.14.4',
         'androguard==3.3.5',
         'requests'
         ],
