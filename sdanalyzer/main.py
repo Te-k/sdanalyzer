@@ -6,6 +6,7 @@ import argparse
 import threading
 import webbrowser
 import logging
+import time
 from peewee import DoesNotExist
 from androguard.core import androconf
 from androguard.core.bytecodes.axml import ResParserError
@@ -36,23 +37,36 @@ def add_apk(apkpath, phone):
     apk.size = res['size']
     apk.frosting = res['frosting']
     apk.suspicious = None
-    vt = check_vt(res['sha256'])
-    if vt:
-        if vt['found']:
-            apk.vt_link = vt['permalink']
-            apk.vt_positives = vt['positives']
-            apk.vt_total = vt['total']
-        else:
-            apk.vt_link = None
-    else:
-        apk.vt_link = None
-    k = get_koodous_report(res['sha256'])
-    if k:
-        apk.koodous_link = "https://koodous.com/apks/{}".format(res['sha256'])
+    #k = get_koodous_report(res['sha256'])
+    #if k:
+        #apk.koodous_link = "https://koodous.com/apks/{}".format(res['sha256'])
+    apk.vt_link = None
     apk.suspicious_level = get_suspicious_level(apk)
     apk.has_dex = (len(res['dexes'].keys()) > 0)
     apk.dexes = res['dexes']
     apk.save()
+
+def chunks(lst, n):
+    """Yield successive n-sized chunks from lst."""
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]
+
+
+def check_hashes_vt(hashes, phone):
+    for l in chunks(hashes, 25):
+        res = check_vt(l)
+        for h in res:
+            apk = list(Apk.select().join(Phone).where(Phone.id == phone.id, Apk.sha256 == h['hash']))
+            if len(apk) != 1:
+                continue
+            else:
+                apk = apk[0]
+            if h['found']:
+                apk.vt_link = h['permalink']
+                apk.vt_positives = h['positives']
+                apk.vt_total = h['total']
+                apk.save()
+        time.sleep(0.25)
 
 
 def main():
@@ -143,9 +157,11 @@ def main():
                     print("This APK is already in the database")
                     sys.exit(0)
                 add_apk(args.APK, phone)
+                check_hashes_vt([h], phone)
                 print("APK {} added to the phone".format(args.APK))
             elif os.path.isdir(args.APK):
                 failed = []
+                hashes = []
                 imported = 0
                 for f in os.listdir(args.APK):
                     try:
@@ -162,6 +178,7 @@ def main():
                                 print("This APK {} is already in the database".format(pp))
                                 continue
                             add_apk(pp, phone)
+                            hashes.append(h)
                             print("APK {} added to the phone".format(pp))
                             imported += 1
                         else:
@@ -169,6 +186,8 @@ def main():
                     except ResParserError:
                         failed.append(pp)
                         print("Parsing Error from androguard, this app will be ignored")
+                print("Checking VirusTotal")
+                check_hashes_vt(hashes, phone)
                 print("")
                 print("{} applications imported".format(imported))
                 if len(failed) > 0:

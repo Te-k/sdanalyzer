@@ -68,6 +68,7 @@
                                                 <span class="dropdown">
   <button class="btn btn-xs btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <a class="dropdown-item" href="https://play.google.com/store/apps/details?id={{apk.package_name}}" target="blank_">Play Store</a>
       <a class="dropdown-item" href="https://www.virustotal.com/gui/search/androguard%253A%2522{{apk.package_name}}%2522" target="blank_">VT</a>
     <a class="dropdown-item" href="https://koodous.com/apks?search={{apk.package_name}}" target="_blank">Koodous</a>
     <a class="dropdown-item" href="https://www.apklab.io/samples.html?filter={{apk.package_name}}" target="blank_">APKLab</a>
@@ -94,11 +95,7 @@
                                         </tr>
                                         <tr>
                                             <th>Koudous </th>
-                                            {% if apk.koodous_link %}
-                                                <td><a href="{{apk.koodous_link}}" target="_blank">Link</a></td>
-                                            {% else %}
-                                                <td>Unknown</td>
-                                            {% endif %}
+                                            <td><a href="https://koodous.com/apks/{{apk.sha256}}" target="_blank">Search</a></td>
                                         </tr>
                                         <tr>
                                             <th>APKLab </th>

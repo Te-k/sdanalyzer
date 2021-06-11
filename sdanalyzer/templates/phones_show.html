@@ -29,9 +29,7 @@
       {% if p.vt_link %}
       <a class="dropdown-item" href="{{p.vt_link}}" target="blank_">VT</a>
       {% endif %}
-      {% if p.koodous_link %}
-      <a class="dropdown-item" href="{{p.koodous_link}}" target="_blank">Koodous</a>
-      {% endif %}
+      <a class="dropdown-item" href="https://koodous.com/apks/{{p.sha256}}" target="_blank">Koodous</a>
         <a class="dropdown-item" href="https://www.apklab.io/samples.html?filter={{p.sha256}}" target="blank_">APKLab</a>
   </span>
 
