@@ -39,6 +39,7 @@
                     <td style="text-align: center;">{{p.permissions_suspicious}}</td>
                     <td style="text-align: center;">{% if p.frosting %}<i class="fa fa-play" data-toggle="tooltip" data-placement="top" title="Google Play Store Metadata"></i>{%endif%}</td>
                     <td style="text-align: center;">
+                        {% if p.vt_check %}
                         {% if p.vt_link %}
                             {% if p.vt_positives == 0 %}
                                 <a href="{{p.vt_link}}" target="_blank"><span class="badge badge-success">{{p.vt_positives}} / {{p.vt_total}}</span></a>
@@ -49,6 +50,9 @@
                             {% endif %}
                         {% else %}
                             <a href="{{p.vt_link}}" target="_blank"><span class="badge badge-warning">Unknown</span></a>
+                        {% endif %}
+                        {% else %}
+                            <span class="badge badge-danger">Failed</span>
                         {% endif %}
                     </td>
                     <td style="text-align: center;">{% if p.suspicious_level == 1%}<span class="badge badge-success">Low</span>{%elif p.suspicious_level == 2%}<span class="badge badge-warning">Medium</span>{%else%}<span class="badge badge-danger">High</span>{% endif %}</td>

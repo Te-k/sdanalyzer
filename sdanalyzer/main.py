@@ -7,6 +7,7 @@ import threading
 import webbrowser
 import logging
 import time
+import logging
 from peewee import DoesNotExist
 from androguard.core import androconf
 from androguard.core.bytecodes.axml import ResParserError
@@ -37,14 +38,12 @@ def add_apk(apkpath, phone):
     apk.size = res['size']
     apk.frosting = res['frosting']
     apk.suspicious = None
-    #k = get_koodous_report(res['sha256'])
-    #if k:
-        #apk.koodous_link = "https://koodous.com/apks/{}".format(res['sha256'])
-    apk.vt_link = None
+    apk.vt_check = False
     apk.suspicious_level = get_suspicious_level(apk)
     apk.has_dex = (len(res['dexes'].keys()) > 0)
     apk.dexes = res['dexes']
     apk.save()
+
 
 def chunks(lst, n):
     """Yield successive n-sized chunks from lst."""
@@ -65,6 +64,10 @@ def check_hashes_vt(hashes, phone):
                 apk.vt_link = h['permalink']
                 apk.vt_positives = h['positives']
                 apk.vt_total = h['total']
+                apk.vt_check = True
+                apk.save()
+            else:
+                apk.vt_check = True
                 apk.save()
         time.sleep(0.25)
 
@@ -97,8 +100,9 @@ def main():
     parser_f.set_defaults(subcommand='export')
     args = parser.parse_args()
 
-    logger = logging.getLogger("androguard.apk")
-    logger.setLevel(logging.CRITICAL)
+    logging.getLogger("androguard.apk").setLevel(logging.CRITICAL)
+    logging.getLogger("dad").setLevel(logging.CRITICAL)
+    logging.getLogger("androguard").setLevel(logging.CRITICAL)
 
 
     if 'subcommand' in args:

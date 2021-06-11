@@ -87,10 +87,23 @@
                                         </tr>
                                         <tr>
                                             <th>VT: </th>
-                                            {% if apk.vt_link %}
-                                                <td><a href="{{apk.vt_link}}" target="_blank">{{apk.vt_positives}} / {{apk.vt_total}}</a></td>
+                                            {% if apk.vt_check %}
+                                                {% if apk.vt_link %}
+
+                                                 {% if apk.vt_positives == 0 %}
+                                                 <td><a href="{{apk.vt_link}}" target="_blank"><span class="badge badge-success">{{apk.vt_positives}} / {{apk.vt_total}}</span></a></td>
+                            {% elif p.vt_positives < 5 %}
+                                <td><a href="{{apk.vt_link}}" target="_blank"><span class="badge badge-warning">{{apk.vt_positives}} / {{apk.vt_total}}</span></a></td>
+                            {% else %}
+                                <td><a href="{{apk.vt_link}}" target="_blank"><span class="badge badge-danger">{{apk.vt_positives}} / {{apk.vt_total}}</span></a></td>
+                            {% endif %}
+                                                {% else %}
+                                                <td><span class="badge badge-warning">Unknown</span></td>
+                                                {% endif %}
                                             {% else %}
-                                                <td>Unknown</td>
+                                                <td><span class="badge badge-danger">Failed</span>
+                                                    <a href="https://www.virustotal.com/gui/search/{{apk.sha256}}" target="_blank">Search</a>
+                                                </td>
                                             {% endif %}
                                         </tr>
                                         <tr>
