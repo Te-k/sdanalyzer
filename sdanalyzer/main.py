@@ -38,6 +38,7 @@ def add_apk(apkpath, phone, rules):
     apk.strings = res['strings']
     apk.size = res['size']
     apk.frosting = res['frosting']
+    apk.split = res['split']
     apk.suspicious = None
     apk.vt_check = False
     apk.has_dex = (len(res['dexes'].keys()) > 0)

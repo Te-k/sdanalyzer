@@ -129,9 +129,15 @@
                                             {% endfor %}
                                             </td>
                                             {% else %}
-                                            <td>Clean</td>
+                                            <td><span class="badge badge-success">Not detected</span></td>
                                             {% endif %}
                                         </tr>
+                                        {% if apk.split %}
+                                        <tr>
+                                            <th>Split APK</th>
+                                            <td>Yes - <a href="/apk/{{apk.id}}/split_main">Find Main</a></td>
+                                        </tr>
+                                        {% endif %}
                                         <tr>
                                             <th>Suspicious Level</th>
                                             <td>{% if apk.suspicious_level == 1%}<span class="badge badge-success">Low</span>{%elif apk.suspicious_level == 2%}<span class="badge badge-warning">Medium</span>{%else%}<span class="badge badge-danger">High</span>{% endif %}</td>

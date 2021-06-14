@@ -17,7 +17,8 @@
                     <th></th>
                     <th></th>
                     <th></th>
-                    <th></th>
+                    <th>Cert</th>
+                    <th>Split</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -71,6 +72,7 @@
                     <td>{{p.suspicious}}</td>
                     <td>{{p.suspicious_level}}</td>
                     <td>{{p.certificate_trusted}}</td>
+                    <td>{{p.split}}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
@@ -136,6 +138,10 @@ $(function(){
             {
                 "targets": [ 12 ],
                 "visible": false,
+            },
+            {
+                "targets": [ 13 ],
+                "visible": false,
             }
         ],
         "dom": 'Bfrtip',
@@ -184,7 +190,7 @@ $(function(){
                 text: 'Hide Analyzed Apps',
                 action: function ( e, dt, node, config ) {
                     table
-                    .column(9)
+                    .column(10)
                     .search('None')
                     .draw();
                 }
@@ -193,7 +199,16 @@ $(function(){
                 text: 'Hide Apps with Trusted Certs',
                 action: function ( e, dt, node, config ) {
                     table
-                    .column(11)
+                    .column(12)
+                    .search('False')
+                    .draw();
+                }
+            },
+            {
+                text: 'Hide Secondary Split Apks',
+                action: function ( e, dt, node, config ) {
+                    table
+                    .column(13)
                     .search('False')
                     .draw();
                 }

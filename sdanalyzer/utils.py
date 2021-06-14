@@ -164,6 +164,14 @@ def get_frosting(apk):
     return (0x2146444e in apk._v2_blocks)
 
 
+def apk_is_split(apk):
+    """
+    Return true if the apk is not the main apk of a plit APK
+    """
+    xml = apk.get_android_manifest_xml()
+    return "split" in xml.keys()
+
+
 def extract_apk_infos(apk_path, rules):
     """
     Extract informations from an APK
@@ -187,6 +195,7 @@ def extract_apk_infos(apk_path, rules):
         'app_name': apk.get_app_name(),
         'package_name': apk.get_package(),
         'yara': check_apk_yara(apk, rules),
+        'split': apk_is_split(apk),
         'certificate': {},
         'trusted_cert': False,
         'trusted_cert_name': None,
