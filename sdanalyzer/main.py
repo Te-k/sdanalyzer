@@ -8,15 +8,16 @@ import webbrowser
 import logging
 import time
 import logging
+import yara
 from peewee import DoesNotExist
 from androguard.core import androconf
 from androguard.core.bytecodes.axml import ResParserError
 from .app import app, Phone, Apk
-from .utils import get_db_path, extract_apk_infos, get_sha256, check_vt, get_koodous_report, get_suspicious_level
+from .utils import get_db_path, extract_apk_infos, get_sha256, check_vt, get_koodous_report, get_suspicious_level, check_apk_yara
 
 
-def add_apk(apkpath, phone):
-    res = extract_apk_infos(apkpath)
+def add_apk(apkpath, phone, rules):
+    res = extract_apk_infos(apkpath, rules)
     apk = Apk()
     apk.owner = phone
     apk.path = os.path.abspath(apkpath)
@@ -39,9 +40,10 @@ def add_apk(apkpath, phone):
     apk.frosting = res['frosting']
     apk.suspicious = None
     apk.vt_check = False
-    apk.suspicious_level = get_suspicious_level(apk)
     apk.has_dex = (len(res['dexes'].keys()) > 0)
     apk.dexes = res['dexes']
+    apk.yara = res['yara']
+    apk.suspicious_level = get_suspicious_level(apk)
     apk.save()
 
 
@@ -88,6 +90,7 @@ def main():
     parser_c.set_defaults(subcommand='phones')
     parser_d = subparsers.add_parser('import', help='Import apks')
     parser_d.add_argument('--phone', '-p', help="Phone id")
+    parser_d.add_argument('--yara', '-y', help="Additional YARA rules")
     parser_d.add_argument("APK", help="APK or folder path")
     parser_d.set_defaults(subcommand='import')
     parser_e = subparsers.add_parser('delete', help='Delete a phone and related data')
@@ -150,6 +153,14 @@ def main():
             except DoesNotExist:
                 print("Phone not found")
                 sys.exit(0)
+            # Get Yara rules
+            path = os.path.join(os.path.realpath(__file__)[:-8], 'data/rules.yar')
+            rules = [yara.compile(filepath=path)]
+            if args.yara:
+                if not os.path.isfile(args.yara):
+                    print("The yara file does not exist, skipping")
+                else:
+                    rules.append(yara.compile(filepath=args.yara))
             if os.path.isfile(args.APK):
                 ret_type = androconf.is_android(args.APK)
                 if ret_type != "APK":
@@ -160,7 +171,7 @@ def main():
                 if a > 0:
                     print("This APK is already in the database")
                     sys.exit(0)
-                add_apk(args.APK, phone)
+                add_apk(args.APK, phone, rules)
                 check_hashes_vt([h], phone)
                 print("APK {} added to the phone".format(args.APK))
             elif os.path.isdir(args.APK):
@@ -181,7 +192,7 @@ def main():
                             if a > 0:
                                 print("This APK {} is already in the database".format(pp))
                                 continue
-                            add_apk(pp, phone)
+                            add_apk(pp, phone, rules)
                             hashes.append(h)
                             print("APK {} added to the phone".format(pp))
                             imported += 1
@@ -250,4 +261,11 @@ def main():
         else:
             parser.print_help()
     else:
+        print("No command given, assuming you wanted to launch the web server")
+        # We launch a browser with some delay.
+        url = 'http://127.0.0.1:{}'.format(5000)
+        threading.Timer(1.25, lambda: webbrowser.open(url) ).start()
+        # launch the flask app
+        app.run(port=5000, debug=False)
+
         parser.print_help()

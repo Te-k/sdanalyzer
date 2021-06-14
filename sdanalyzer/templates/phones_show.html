@@ -11,6 +11,7 @@
                     <th>Perms</th>
                     <td></td>
                     <th>VT</th>
+                    <th>Yara</th>
                     <th></th>
                     <th></th>
                     <th></th>
@@ -54,6 +55,11 @@
                         {% else %}
                             <span class="badge badge-danger">Failed</span>
                         {% endif %}
+                    </td>
+                    <td style="text-align: center;">
+                        {% for y in p.yara %}
+                            <span class="badge badge-danger">{{y}}</span>
+                        {% endfor %}
                     </td>
                     <td style="text-align: center;">{% if p.suspicious_level == 1%}<span class="badge badge-success">Low</span>{%elif p.suspicious_level == 2%}<span class="badge badge-warning">Medium</span>{%else%}<span class="badge badge-danger">High</span>{% endif %}</td>
                     <td style="text-align: center;"><span id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% if p.suspicious == False %}<i class="fa fa-thumbs-up"></i>{%elif p.suspicious == True %}<i class="fa fa-thumbs-down"></i>{% else %}<i class="fa fa-question"></i>{% endif %}</span><div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -104,20 +110,20 @@ $(function(){
             },
             {
                 "targets": [ 6],
-                "width": "60px"
+                "width": "50px"
             },
             {
                 "targets": [ 7],
-                "width": "15px"
+                "width": "60px"
             },
             {
-                "targets": [ 8 ],
-                "visible": false,
-                "searchable": false
+                "targets": [ 8],
+                "width": "15px"
             },
             {
                 "targets": [ 9 ],
                 "visible": false,
+                "searchable": false
             },
             {
                 "targets": [ 10 ],
@@ -125,6 +131,10 @@ $(function(){
             },
             {
                 "targets": [ 11 ],
+                "visible": false,
+            },
+            {
+                "targets": [ 12 ],
                 "visible": false,
             }
         ],

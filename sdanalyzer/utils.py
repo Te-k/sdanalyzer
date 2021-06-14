@@ -151,6 +151,8 @@ def get_suspicious_level(apk):
         level = 2
     if apk.permissions_suspicious > 5:
         level = max(level, 2)
+    if len(apk.yara) > 0:
+        level = 3
     return level
 
 
@@ -162,7 +164,7 @@ def get_frosting(apk):
     return (0x2146444e in apk._v2_blocks)
 
 
-def extract_apk_infos(apk_path):
+def extract_apk_infos(apk_path, rules):
     """
     Extract informations from an APK
     """
@@ -184,6 +186,7 @@ def extract_apk_infos(apk_path):
         'manifest': apk.get_android_manifest_axml().get_xml(),
         'app_name': apk.get_app_name(),
         'package_name': apk.get_package(),
+        'yara': check_apk_yara(apk, rules),
         'certificate': {},
         'trusted_cert': False,
         'trusted_cert_name': None,
@@ -220,3 +223,15 @@ def extract_apk_infos(apk_path):
         }
 
     return res
+
+def check_apk_yara(a, rules):
+    """
+    Check an apk (dex files) from yara rules
+    """
+    matches = set()
+    for dex in a.get_all_dex():
+        for rule in rules:
+            res = rule.match(data=dex)
+            for r in res:
+                matches.add(r.rule)
+    return list(matches)

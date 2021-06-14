@@ -49,6 +49,7 @@ class Apk(Model):
     permissions_suspicious = IntegerField(null=True)
     urls = JSONField(null=True)
     strings = JSONField(null=True)
+    yara = JSONField(null=True)
     size = IntegerField()
     koodous_link = CharField(null=True)
     vt_positives = IntegerField(null=True)

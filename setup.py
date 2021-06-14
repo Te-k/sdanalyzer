@@ -19,7 +19,8 @@ setup(
         'Flask-WTF==0.14.3',
         'peewee==3.14.4',
         'androguard==3.3.5',
-        'requests'
+        'requests',
+        'yara-python==4.1.0'
         ],
     python_requires='>=3.5',
     license='GPLv3',

@@ -121,6 +121,18 @@
                                         </tr>
                                         {% endif %}
                                         <tr>
+                                            <th>Yara</th>
+                                            {% if apk.yara|length > 0 %}
+                                            <td>
+                                                {% for y in apk.yara %}
+                                                    <span class="badge badge-danger">{{y}}</span>
+                                            {% endfor %}
+                                            </td>
+                                            {% else %}
+                                            <td>Clean</td>
+                                            {% endif %}
+                                        </tr>
+                                        <tr>
                                             <th>Suspicious Level</th>
                                             <td>{% if apk.suspicious_level == 1%}<span class="badge badge-success">Low</span>{%elif apk.suspicious_level == 2%}<span class="badge badge-warning">Medium</span>{%else%}<span class="badge badge-danger">High</span>{% endif %}</td>
                                         </tr>
