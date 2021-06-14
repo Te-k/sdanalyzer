@@ -11,6 +11,8 @@ You can install sdanalyzer directly from [pypi](https://pypi.org/project/sdanaly
 You can also download the code from the git repository, and install it from the source code :
 
 ```
+git pull git@github.com:Te-k/sdanalyzer.git
+cd sdanalyzer
 pip install .
 ```
 
@@ -33,6 +35,8 @@ sdanalyzer import --phone 1 .
 sdanalyzer serve
 ```
 
+Once you have done your analysis, you can delete the local database with `sdanalyzer flush`
+
 You can check all the options of the sdanalyzer command :
 
 ```
@@ -54,6 +58,13 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
 ```
+
+## Infos on how it works
+
+* This tool largely relies on [androguard](https://github.com/androguard/androguard)
+* The local database is an sqlite database stored in `~/.config/sdanalyzer/db.db`
+* An incomplete list of [trusted APK signing certificates](https://github.com/Te-k/sdanalyzer/blob/master/sdanalyzer/data/trusted_certs.csv) is provided with the tool. It has been built manually and is helpful to quickly sort apps, but it is clearly incomplete so use at your own risk.
+* A few yara rules are provided with the tool but if you want to rely on Yara for detection, you are encouraged to provide additional yara rules with the `-y` option to the `sdanalyzer import` command.
 
 Feel free to open issues for new feature ideas or bugs.
 
