@@ -46,6 +46,7 @@ def add_apk(apkpath, phone, rules):
     apk.yara = res['yara']
     apk.suspicious_level = get_suspicious_level(apk)
     apk.save()
+    return apk
 
 
 def chunks(lst, n):
@@ -178,6 +179,7 @@ def main():
             elif os.path.isdir(args.APK):
                 failed = []
                 hashes = []
+                risks = []
                 imported = 0
                 for f in os.listdir(args.APK):
                     try:
@@ -193,7 +195,7 @@ def main():
                             if a > 0:
                                 print("This APK {} is already in the database".format(pp))
                                 continue
-                            add_apk(pp, phone, rules)
+                            apk = add_apk(pp, phone, rules)
                             hashes.append(h)
                             print("APK {} added to the phone".format(pp))
                             imported += 1
@@ -204,8 +206,14 @@ def main():
                         print("Parsing Error from androguard, this app will be ignored")
                 print("Checking VirusTotal")
                 check_hashes_vt(hashes, phone)
+                # Compute risk levels
+                for apk in Apk.select().join(Phone).where(Phone.id == phone.id):
+                    apk.suspicious_level = get_suspicious_level(apk)
+                    risks.append(apk.suspicious_level)
+                    apk.save()
                 print("")
                 print("{} applications imported".format(imported))
+                print("Risk levels: Low {} - Medium {} - High {}".format(risks.count(1), risks.count(2), risks.count(3)))
                 if len(failed) > 0:
                     print("{} applications could not be imported:".format(len(failed)))
                     for f in failed:

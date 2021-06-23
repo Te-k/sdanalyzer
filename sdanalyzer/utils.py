@@ -142,7 +142,7 @@ def get_suspicious_level(apk):
     3 : High
     """
     level = 1
-    if apk.vt_link:
+    if apk.vt_positives is not None:
         if apk.vt_positives > 5:
             level = 3
         elif apk.vt_positives > 0:
@@ -150,7 +150,8 @@ def get_suspicious_level(apk):
     else:
         level = 2
     if apk.permissions_suspicious > 5:
-        level = max(level, 2)
+        if not apk.certificate_trusted:
+            level = max(level, 2)
     if len(apk.yara) > 0:
         level = 3
     return level
