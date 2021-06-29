@@ -51,7 +51,7 @@
                                 <a href="{{p.vt_link}}" target="_blank"><span class="badge badge-danger">{{p.vt_positives}} / {{p.vt_total}}</span></a>
                             {% endif %}
                         {% else %}
-                            <a href="{{p.vt_link}}" target="_blank"><span class="badge badge-warning">Unknown</span></a>
+                            <a href="https://www.virustotal.com/gui/search/{{p.sha256}}" target="_blank"><span class="badge badge-warning">Unknown</span></a>
                         {% endif %}
                         {% else %}
                             <span class="badge badge-danger">Failed</span>
@@ -150,7 +150,7 @@ $(function(){
                 text: 'Mark Displayed Apps As Good',
                 action: function ( e, dt, node, config ) {
                     data = table.rows({ search: 'applied' }).data();
-                    apks = Array.from(data, x => x[8]);
+                    apks = Array.from(data, x => x[9]);
                     if (apks.length > 0) {
                         d = JSON.stringify({'status': 'good', 'apks': apks});
                         $.ajax({
@@ -170,7 +170,7 @@ $(function(){
                 text: 'Reset Analysis of Displayed Apps',
                 action: function ( e, dt, node, config ) {
                     data = table.rows({ search: 'applied' }).data();
-                    apks = Array.from(data, x => x[8]);
+                    apks = Array.from(data, x => x[9]);
                     if (apks.length > 0) {
                         d = JSON.stringify({'status': 'none', 'apks': apks});
                         $.ajax({
