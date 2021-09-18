@@ -186,7 +186,6 @@ def extract_apk_infos(apk_path, rules):
     sha1.update(data)
     md5.update(data)
 
-    #apk, dex, dexes = AnalyzeAPK(apk_path)
     apk = aapk.APK(apk_path)
     res = {
         'sha256': sha256.hexdigest(),

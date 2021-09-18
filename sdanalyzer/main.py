@@ -201,9 +201,10 @@ def main():
                             imported += 1
                         else:
                             print("{} is not a file".format(pp))
-                    except ResParserError:
+                    except (ResParserError, ValueError) as e:
                         failed.append(pp)
                         print("Parsing Error from androguard, this app will be ignored")
+                        print(e)
                 print("Checking VirusTotal")
                 check_hashes_vt(hashes, phone)
                 # Compute risk levels

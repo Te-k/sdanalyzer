@@ -6,7 +6,7 @@ Tool to analyze a large number of Android applications easily. It consist of a c
 
 ## Installation
 
-You can install sdanalyzer directly from [pypi](https://pypi.org/project/sdanalyzer/) : `pip install sdanalyze`.
+You can install sdanalyzer directly from [pypi](https://pypi.org/project/sdanalyzer/) : `pip install sdanalyzer`.
 
 You can also download the code from the git repository, and install it from the source code :
 
