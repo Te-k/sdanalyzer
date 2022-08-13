@@ -215,8 +215,8 @@ def extract_apk_infos(apk_path, rules):
         res['certificate']['serial'] = '{:X}'.format(cert.serial_number)
         res['certificate']['issuerDN'] = convert_x509_name(cert.issuer)
         res['certificate']['subjectDN'] = convert_x509_name(cert.subject)
-        res['certificate']['not_before'] = cert['tbs_certificate']['validity']['not_before'].native.strftime('%b %-d %X %Y %Z')
-        res['certificate']['not_after'] = cert['tbs_certificate']['validity']['not_after'].native.strftime('%b %-d %X %Y %Z')
+        res['certificate']['not_before'] = cert['tbs_certificate']['validity']['not_before'].native.strftime('%b %d %X %Y %Z')
+        res['certificate']['not_after'] = cert['tbs_certificate']['validity']['not_after'].native.strftime('%b %d %X %Y %Z')
         trusted_certs = get_know_certificates()
         if csha1.upper() in trusted_certs:
             res['trusted_cert'] = True
