@@ -1,5 +1,8 @@
 # sdanalyzer
 
+[![PyPI](https://img.shields.io/pypi/v/sdanalyzer)](https://pypi.org/project/sdanalyzer/) [![PyPI - Downloads](https://img.shields.io/pypi/dm/sdanalyzer)](https://pypistats.org/packages/sdanalyzer) [![PyPI - License](https://img.shields.io/pypi/l/sdanalyzer)](LICENSE) [![GitHub issues](https://img.shields.io/github/issues/te-k/sdanalyzer)](https://github.com/Te-k/sdanalyzer/issues)
+
+
 Tool to analyze a large number of Android applications easily. It consist of a command line tool extracting data from all applications, storing it in a local database, and then opening a web interface to manually analyze the results in a user-friendly way.
 
 ![screenshot](screenshot.png)
