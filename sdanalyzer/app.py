@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 import datetime
-from flask import Flask, render_template, request, redirect, send_file, jsonify, flash
+from flask import Flask, render_template, request, redirect, jsonify, flash
 from peewee import Model, CharField, ForeignKeyField, DateTimeField, TextField, BooleanField, IntegerField
 from playhouse.sqlite_ext import SqliteExtDatabase, JSONField
 from .forms import PhoneForm
@@ -17,6 +17,7 @@ class Phone(Model):
     name = CharField()
     model = CharField(null=True)
     created_on = DateTimeField(default=datetime.datetime.now)
+
     class Meta:
         database = db
 
@@ -75,7 +76,8 @@ class Apk(Model):
                         "Size", "VT Link", "VT Result", "Frosting", "Has Dex"
                         "Suspicious Level"]
         """
-        res = [self.md5, self.sha1, self.sha256, self.package_name,
+        res = [
+            self.md5, self.sha1, self.sha256, self.package_name,
             self.app_name, self.certificate_sha1]
         res.append(self.certificate.get('subjectDN', ''))
         res.append(self.certificate.get('issuerDN', ''))
@@ -123,7 +125,7 @@ db.connect()
 db.create_tables([Phone, Apk])
 
 
-#----------------------------------- Views ------------------------------------
+# ----------------------------------- Views -----------------------------------
 @app.route('/')
 def hello():
     phones = Phone.select()
@@ -155,6 +157,7 @@ def apk_show(_id):
     phone = apk.owner
     return render_template('apk_show.html', phone=phone, apk=apk, sp=SUSPICIOUS_PERMISSIONS)
 
+
 @app.route('/apk/<int:_id>/status')
 def apk_status(_id):
     apk = Apk.get(Apk.id == _id)
@@ -179,13 +182,15 @@ def apk_status(_id):
 @app.route('/apk/<int:_id>/split_main')
 def apk_split_main(_id):
     apk = Apk.get(Apk.id == _id)
-    mains = Apk.select().join(Phone).where(Phone.id == apk.owner.id, Apk.split == False, Apk.package_name == apk.package_name)
+    mains = Apk.select().join(Phone).where(
+        Phone.id == apk.owner.id,
+        Apk.split is False,
+        Apk.package_name == apk.package_name)
     if len(mains) == 1:
         return redirect('/apk/{}'.format(mains[0].id))
     else:
         flash("Main apk not found")
         return redirect('/apk/{}'.format(apk.id))
-
 
 
 @app.route('/apk/bulk_status', methods=['POST'])
@@ -196,7 +201,7 @@ def apk_bulk_status():
         if status == 'good':
             s = False
         elif status == 'bad':
-            s = true
+            s = True
         else:
             s = None
 

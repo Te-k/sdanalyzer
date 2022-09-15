@@ -7,13 +7,12 @@ import threading
 import webbrowser
 import logging
 import time
-import logging
 import yara
 from peewee import DoesNotExist
 from androguard.core import androconf
 from androguard.core.bytecodes.axml import ResParserError
 from .app import app, Phone, Apk
-from .utils import get_db_path, extract_apk_infos, get_sha256, check_vt, get_koodous_report, get_suspicious_level, check_apk_yara
+from .utils import get_db_path, extract_apk_infos, get_sha256, check_vt, get_suspicious_level
 
 
 def add_apk(apkpath, phone, rules):
@@ -56,8 +55,8 @@ def chunks(lst, n):
 
 
 def check_hashes_vt(hashes, phone):
-    for l in chunks(hashes, 25):
-        res = check_vt(l)
+    for chunk in chunks(hashes, 25):
+        res = check_vt(chunk)
         for h in res:
             apk = list(Apk.select().join(Phone).where(Phone.id == phone.id, Apk.sha256 == h['hash']))
             if len(apk) != 1:
@@ -81,8 +80,9 @@ def main():
     subparsers = parser.add_subparsers(help='Subcommand')
     parser_a = subparsers.add_parser('serve', help='Launch the web app')
     parser_a.add_argument('--debug', '-D', action='store_true', help='debug mode')
-    parser_a.add_argument('--port', '-p', type=int, default=5000,
-            help='Port used by the web server')
+    parser_a.add_argument(
+        '--port', '-p', type=int, default=5000,
+        help='Port used by the web server')
     parser_a.set_defaults(subcommand='serve')
     parser_b = subparsers.add_parser('flush', help='Flush the database')
     parser_b.set_defaults(subcommand='flush')
@@ -109,13 +109,12 @@ def main():
     logging.getLogger("dad").setLevel(logging.CRITICAL)
     logging.getLogger("androguard").setLevel(logging.CRITICAL)
 
-
     if 'subcommand' in args:
         if args.subcommand == 'serve':
             if not args.debug:
                 # We launch a browser with some delay.
                 url = 'http://127.0.0.1:{}'.format(args.port)
-                threading.Timer(1.25, lambda: webbrowser.open(url) ).start()
+                threading.Timer(1.25, lambda: webbrowser.open(url)).start()
 
             # launch the flask app
             app.run(port=args.port, debug=args.debug)
@@ -214,7 +213,8 @@ def main():
                     apk.save()
                 print("")
                 print("{} applications imported".format(imported))
-                print("Risk levels: Low {} - Medium {} - High {}".format(risks.count(1), risks.count(2), risks.count(3)))
+                print("Risk levels: Low {} - Medium {} - High {}".format(
+                    risks.count(1), risks.count(2), risks.count(3)))
                 if len(failed) > 0:
                     print("{} applications could not be imported:".format(len(failed)))
                     for f in failed:
@@ -250,7 +250,8 @@ def main():
                     output = "{}.csv".format(phone.name.replace(' ', ''))
                 with open(output, 'w') as csvfile:
                     csvwriter = csv.writer(csvfile, delimiter=',', quotechar='"')
-                    csvwriter.writerow(["md5", "sha1", "sha256", "Package",
+                    csvwriter.writerow([
+                        "md5", "sha1", "sha256", "Package",
                         "App Name", "Cert Sha1", "Cert Subject", "Cert Issuer",
                         "Cert Serial", "Cert Not Before", "Cert Not After",
                         "Size", "VT Link", "VT Result", "Frosting", "Has Dex",
@@ -274,7 +275,7 @@ def main():
         print("No command given, assuming you wanted to launch the web server")
         # We launch a browser with some delay.
         url = 'http://127.0.0.1:{}'.format(5000)
-        threading.Timer(1.25, lambda: webbrowser.open(url) ).start()
+        threading.Timer(1.25, lambda: webbrowser.open(url)).start()
         # launch the flask app
         app.run(port=5000, debug=False)
 

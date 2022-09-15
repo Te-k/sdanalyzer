@@ -3,12 +3,10 @@ import platform
 import re
 import hashlib
 import requests
-from androguard.misc import AnalyzeAPK
 from androguard.core.bytecodes import apk as aapk
-from androguard.core import androconf
 
 
-SUSPICIOUS_PERMISSIONS  = [
+SUSPICIOUS_PERMISSIONS = [
     'android.permission.INTERNET',
     'android.permission.ACCESS_FINE_LOCATION',
     'android.permission.READ_CONTACTS',
@@ -92,7 +90,7 @@ def check_vt(hashes):
 def get_koodous_report(sha256):
     url = "https://api.koodous.com/apks/{}".format(sha256)
     res = requests.get(url)
-    if res.status_code == 404 :
+    if res.status_code == 404:
         return None
     return res.json()
 
@@ -120,7 +118,7 @@ def get_urls(apk):
     """
     res = []
     for dex in apk.get_all_dex():
-        res += re.findall(b'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', dex)
+        res += re.findall(br'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', dex)
     return [s.decode('utf-8') for s in res]
 
 
@@ -181,7 +179,7 @@ def cross_strftime(dt):
     if platform.system() == 'Windows':
         return dt.strftime('%b %#d %X %Y %Z')
     else:
-        return dt.strftime('%b %-d %X %Y %Z') 
+        return dt.strftime('%b %-d %X %Y %Z')
 
 
 def extract_apk_infos(apk_path, rules):
@@ -243,6 +241,7 @@ def extract_apk_infos(apk_path, rules):
         }
 
     return res
+
 
 def check_apk_yara(a, rules):
     """

@@ -17,17 +17,17 @@ setup(
     install_requires=[
         'Flask==2.2.2',
         'Flask-WTF==1.0.1',
-        'peewee==3.14.4',
+        'peewee==3.15.2',
         'androguard==3.3.5',
         'requests',
-        'yara-python==4.1.0'
+        'yara-python==4.2.3'
         ],
     python_requires='>=3.5',
     license='GPLv3',
     packages=['sdanalyzer', 'sdanalyzer.templates', 'sdanalyzer.data'],
     package_data={'sdanalyzer': ['sdanalyzer/data/*', 'sdanalyzer/templates/*']},
-    entry_points= {
-        'console_scripts': [ 'sdanalyzer=sdanalyzer.main:main' ]
+    entry_points={
+        'console_scripts': ['sdanalyzer=sdanalyzer.main:main']
     },
     classifiers=[
         "Programming Language :: Python :: 3",
