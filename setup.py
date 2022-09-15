@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='sdanalyzer',
-    version='0.1.6',
+    version='0.1.7',
     description='Tool to analyze APK files',
     long_description=long_description,
     long_description_content_type="text/markdown",
