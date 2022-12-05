@@ -65,7 +65,7 @@ def check_vt(hashes):
     """
     Check if a hash is on VT
     """
-    apikey = "233f22e200ca5822bd91103043ccac138b910db79f29af5616a9afe8b6f215ad"
+    apikey = ""
     url = "https://www.virustotal.com/partners/sysinternals/file-reports?apikey={}".format(apikey)
     items = []
     for sha256 in hashes:
