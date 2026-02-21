@@ -15,7 +15,7 @@ setup(
     keywords="osint",
     include_package_data=True,
     install_requires=[
-        "Flask==3.0.3",
+        "Flask==3.1.3",
         "Flask-WTF==1.2.1",
         "peewee==3.17.6",
         "androguard==4.1.2",
